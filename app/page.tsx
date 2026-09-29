@@ -153,7 +153,13 @@ export default function Home() {
           <div className="pointer-events-auto">
             <LayerSidebar
               activeLayer={activeLayer}
-              onLayerChange={setActiveLayer}
+              onLayerChange={(layer) => {
+                setActiveLayer(layer);
+                if (layer === "typhoon") {
+                  setSelectedTyphoonIndex(typhoonTrack.currentIndex);
+                  setIsPlayingTyphoon(false);
+                }
+              }}
               mapStyle={mapStyle}
               onMapStyleChange={setMapStyle}
               showDiffusion={showDiffusion}

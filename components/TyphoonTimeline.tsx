@@ -30,11 +30,25 @@ export default function TyphoonTimeline({
   const currentPoint: TyphoonPoint = points[selectedIndex] || points[track.currentIndex];
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Auto-play interval
+  // Auto-sync to "現在" whenever a new track is loaded
+  const prevTrackIdRef = useRef(track.id);
+  useEffect(() => {
+    if (prevTrackIdRef.current !== track.id) {
+      prevTrackIdRef.current = track.id;
+      onSelectIndex(track.currentIndex);
+    }
+  }, [track.id, track.currentIndex, onSelectIndex]);
+
+  // Auto-play interval: starts from "現在" and loops back to "現在" after the last forecast point
   useEffect(() => {
     if (isPlaying) {
       timerRef.current = setInterval(() => {
-        onSelectIndex((selectedIndex + 1) % points.length);
+        if (selectedIndex >= points.length - 1) {
+          // Loop back to "現在" (currentIndex)
+          onSelectIndex(track.currentIndex);
+        } else {
+          onSelectIndex(selectedIndex + 1);
+        }
       }, 1400);
     } else if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -42,7 +56,17 @@ export default function TyphoonTimeline({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isPlaying, selectedIndex, points.length, onSelectIndex]);
+  }, [isPlaying, selectedIndex, points.length, track.currentIndex, onSelectIndex]);
+
+  const handleTogglePlay = () => {
+    if (!isPlaying) {
+      // If at the end or before "現在", set initial playback point to "現在"
+      if (selectedIndex >= points.length - 1) {
+        onSelectIndex(track.currentIndex);
+      }
+    }
+    onTogglePlay();
+  };
 
   const isCurrentTime = selectedIndex === track.currentIndex;
   const isForecast = currentPoint.status === "forecast";
@@ -52,8 +76,8 @@ export default function TyphoonTimeline({
       {/* Play / Pause Button */}
       <button
         type="button"
-        onClick={onTogglePlay}
-        title={isPlaying ? "暫停路徑播放" : "播放路徑時間軸"}
+        onClick={handleTogglePlay}
+        title={isPlaying ? "暫停路徑播放" : "從「現在」播放路徑時間軸"}
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rose-500 shadow-md shadow-rose-500/30 transition-transform hover:scale-105 hover:bg-rose-600 active:scale-95"
       >
         {isPlaying ? (
