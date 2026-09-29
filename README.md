@@ -2,6 +2,10 @@
 
 以中央氣象署 (CWA) 即時觀測資料繪製的全台氣象地圖，支援氣溫／雨量／濕度／風速圖層切換，並疊加風場粒子動畫。
 
+![台灣即時氣象觀測與連續擴散漸變](./docs/screenshot-weather.png)
+
+![即時颱風路徑與時間軸播放器](./docs/screenshot-typhoon.png)
+
 **🔗 線上展示：<https://a-iot-hw-1-cwa.vercel.app/>**
 
 AIoT 創新微課程實作作業 (AIot-HW1-CWA)。課程原始版本以 Streamlit + Folium 實作一週預報儀表板，保留於 [BlueET1/AIot-HW1-CWA](https://github.com/BlueET1/AIot-HW1-CWA)；本專案為其進階版，改以即時觀測資料與 MapLibre GL 重新實作。
